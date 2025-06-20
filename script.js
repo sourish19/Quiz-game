@@ -1,7 +1,7 @@
 const questionSet = [
   {
     question: "Which is the longest animal in the world?",
-    option: ["Shark", "BlueWhale", "Elephant", "Giraffe"],
+    option: ["Shark", "Blue Whale", "Elephant", "Giraffe"],
     answer: "Blue Whale",
   },
   {
@@ -20,57 +20,89 @@ const questionSet = [
     answer: "Australia",
   },
 ];
-const question = document.querySelector(".question");
-const choices = document.querySelectorAll(".choices");
+const questionContainer = document.querySelector("#question-container");
 const nextBttn = document.querySelector(".nextBttn");
 
-let flag = true;
-let questionAlreadyAnswered = [];
-//GENERATE A RANDOME QUESTION
-const minValue = 0;
-const maxValue = 4;
-let randomNumber = (Math.random() * (maxValue - minValue) + minValue).toFixed(
-  0,
-);
+let curr_Question = 0;
+let next_flag = false;
+let correct_option = null;
 
-const loadQuestions = () => {
-  questionAlreadyAnswered.push(randomNumber); // PUSH LOADED QUESTION NUMBER
-  question.innerText = questionSet[randomNumber].question; // LOAD QUESTION
+function loadContents() {
+  if (curr_Question < questionSet.length) {
+    for (let i = curr_Question; i <= curr_Question; i++) {
+      correct_option = questionSet[i].answer;
 
-  // LOAD OPTIONS
-  for (let i = 0; i < choices.length; i++) {
-    for (let j = i; j <= i; j++) {
-      choices[j].innerHTML = questionSet[randomNumber].option[j];
+      questionContainer.innerHTML = `
+        <div
+          class="question text-blue-800 text-2xl font-bold"
+          style="font-family: &quot;Poppins&quot;, sans-serif"
+        >${questionSet[i].question}</div>
+
+        <div
+          class="flex flex-col gap-3 my-5"
+          style="font-family: &quot;Poppins&quot;, sans-serif"
+        >
+        ${getOptions(i)}
+        </div>
+      
+      `;
     }
+    curr_Question++;
   }
-};
+  return;
+}
 
-const correctAnswer = () => {
-  choices.forEach((e) => {
-    if (e.innerHTML === questionSet[randomNumber].answer) {
+function getOptions(index) {
+  let allOptions = questionSet[index].option
+    .map((e) => {
+      return `<div class="Options">${e}</div>`;
+    })
+    .join("");
+
+  return allOptions;
+}
+
+function findCorrectOption() {
+  const question = document.querySelector(".question");
+  const options = document.querySelectorAll(".Options");
+  const correct_answer = questionSet.find((val) => {
+    if (val.question == question.innerHTML) {
+      return val;
+    }
+  });
+  options.forEach((e) => {
+    if (e.innerHTML === correct_answer.answer) {
       e.classList.add("bg-[#81ff94]");
     }
   });
-};
+  return;
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadQuestions();
-});
-
-choices.forEach((e) => {
-  if (flag === true) {
-    e.addEventListener("click", () => {
-      if (e.innerHTML === questionSet[randomNumber].answer) {
-        e.classList.add("bg-[#81ff94]");
-      } else {
-        e.classList.add("bg-pink-500");
-        correctAnswer();
-      }
-    });
+questionContainer.addEventListener("click", (e) => {
+  const clicked_option = e.target;
+  if (!next_flag) {
+    if (
+      clicked_option.className === "Options" &&
+      clicked_option.innerHTML === correct_option
+    ) {
+      clicked_option.classList.add("bg-[#81ff94]");
+      next_flag = true;
+    } else if (
+      clicked_option.className === "Options" &&
+      clicked_option.innerHTML != correct_option
+    ) {
+      findCorrectOption();
+      clicked_option.classList.add("bg-[#ff0000]");
+      next_flag = true;
+    }
   }
 });
 
-// nextBttn.addEventListener("click", () => {
-//   nextBttn.classList.add("bg-pink-500");
-//   nextBttn.classList.remove("bg-blue-950");
-// });
+nextBttn.addEventListener("click", (e) => {
+  if (next_flag) {
+    next_flag = false;
+    loadContents();
+  }
+});
+
+loadContents();
