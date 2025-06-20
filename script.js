@@ -22,10 +22,20 @@ const questionSet = [
 ];
 const questionContainer = document.querySelector("#question-container");
 const nextBttn = document.querySelector(".nextBttn");
+const mainContainer = document.querySelector(".mainContainer");
+const quizCompleteContainer = document.querySelector(
+  ".quiz-complete-container",
+);
+const correctAnswersElement = document.querySelector(".correct-answers");
+const wrongAnswersElement = document.querySelector(".wrong-answers");
+const playAgainBttn = document.querySelector(".play-again");
 
 let curr_Question = 0;
 let next_flag = false;
 let correct_option = null;
+
+let wrongOptSelected = 0;
+let correctOptSelected = 0;
 
 function loadContents() {
   if (curr_Question < questionSet.length) {
@@ -48,6 +58,11 @@ function loadContents() {
       `;
     }
     curr_Question++;
+  } else {
+    mainContainer.classList.toggle("hidden", true);
+    quizCompleteContainer.classList.toggle("hidden", false);
+    correctAnswersElement.innerHTML = `Correct: ${correctOptSelected}`;
+    wrongAnswersElement.innerHTML = `Wrong: ${wrongOptSelected}`;
   }
   return;
 }
@@ -87,6 +102,7 @@ questionContainer.addEventListener("click", (e) => {
     ) {
       clicked_option.classList.add("bg-[#81ff94]");
       next_flag = true;
+      correctOptSelected++;
     } else if (
       clicked_option.className === "Options" &&
       clicked_option.innerHTML != correct_option
@@ -94,6 +110,7 @@ questionContainer.addEventListener("click", (e) => {
       findCorrectOption();
       clicked_option.classList.add("bg-[#ff0000]");
       next_flag = true;
+      wrongOptSelected++;
     }
   }
 });
@@ -103,6 +120,10 @@ nextBttn.addEventListener("click", (e) => {
     next_flag = false;
     loadContents();
   }
+});
+
+playAgainBttn.addEventListener("click", (e) => {
+  location.reload();
 });
 
 loadContents();

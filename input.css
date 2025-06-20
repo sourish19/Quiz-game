@@ -2,7 +2,7 @@
 
 @layer components {
   .background {
-    @apply flex justify-center h-screen items-center bg-gradient-to-bl from-[#0f172a] via-[#1e1a78] to-[#0f172a];
+    @apply flex justify-center h-screen items-center relative bg-gradient-to-bl from-[#0f172a] via-[#1e1a78] to-[#0f172a];
   }
   .mainContainer {
     @apply items-center rounded-2xl text-left p-5;
